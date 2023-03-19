@@ -1,0 +1,56 @@
+{% extends 'index.html' %} 
+
+{% block title %}
+    {{ user }}
+{% endblock %}
+
+{% block insidehead %}
+{% endblock %}
+
+{% block content %}
+    <header>
+            <strong> Edit Details </strong>
+    </header>
+    <br> <br>
+
+    
+
+    <form  class = "form-profile" method = "POST" action = "edit">
+        {% csrf_token %}
+        <h6 style = "color:red;"> Mobile number and NID cannot be edited. </h6> 
+        <div> 
+            {% for message in messages %}
+                <h5 style = "color:red;"> {{ message }} </h5> <br>
+            {% endfor %}
+        </div>
+
+        <div>
+            <label for=""> First Name </label> <br>
+            <input type="text" name="fname" placeholder = {{user.first_name}} > 
+        </div>
+        <br>
+        <div>
+            <label for=""> Last Name </label> <br>
+            <input type="text" name="lname" placeholder = {{user.last_name}} > 
+        </div>
+        <br>
+        <div  >
+            <label for=""> Email </label> <br>
+            <input type="text" name="email" placeholder = {{user.email}} > 
+        </div>
+        <br>
+        <div >
+            <label for=""> Post Code </label> <br>
+            <input type="text" name="post-code" placeholder = {{profile.post_code}} > 
+        </div>
+        <br>
+        <div >
+            <label for=""> Address </label> <br>
+            <input type="text" name="address" placeholder = {{profile.address}} > 
+        </div>
+        <br>
+        <input  type='submit' value='Save'>
+    </form>
+
+{% endblock %}
+

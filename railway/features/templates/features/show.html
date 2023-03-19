@@ -1,0 +1,40 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Train Information
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content%}
+
+    <header>
+
+    </header> <br> <br>
+
+    <div class = "form-profile" >
+        <table>
+            <thead> 
+                <th > Destination </th>
+                <th colspan="2"> Arrival Time </th>
+                <th > Departure Time </th>
+            </thead>
+            <tbody>
+
+                {% for key, value in route.items %}
+                <tr>
+                    <td> {{key}} </td>
+                    {% for items in value %}
+                    <td> {{items | time:"H:i"}} </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+
+            <tbody>
+        </table>
+    </div>
+
+{% endblock %}

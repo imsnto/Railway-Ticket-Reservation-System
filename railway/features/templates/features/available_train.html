@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Available Train 
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content%}
+
+
+{% for train, times in trains.items %}
+{% for idd in tr_id %}
+    <form class = "form-reg" method="POST" action="{% url 'booking' idd %}">
+        {% csrf_token %}
+
+        <ul>
+           <h1> <li> {{train}} </li> </h1>
+        </ul>
+        <table> 
+            <thead> 
+                <th colspan="2"> {{ from }}  </th>
+                <th colspan="2" > {{ to }}  </th>
+            </thead>
+            <tbody> 
+                    <tr > 
+                        {% for time in times %}
+                            <td colspan="2"> {{ time }} </td>
+                        {% endfor %}
+                    </tr>
+            </tbody>
+
+
+
+        </table> <br> <br> 
+        <div> <a href = "{% url  'booking' idd %}">
+            <button> Booking </button>
+        </a>
+        </div>
+
+
+    </form>
+    {% endfor %}
+    {% endfor %}
+
+
+
+{% endblock %}

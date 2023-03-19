@@ -1,0 +1,139 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    About us 
+{% endblock %}
+{% block insidehead %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background-color: #1e3163;
+        color: white;
+        padding: 20px;
+    }
+
+    h1 {
+        margin: 0;
+    }
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 50px;
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 50px;
+        background-color: #f2f2f2;
+        padding: 20px;
+    }
+
+    .contact-info h2 {
+        margin-top: 0;
+    }
+
+    .contact-info ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .contact-info li {
+        margin-bottom: 10px;
+    }
+
+    .contact-info li span {
+        display: inline-block;
+        width: 150px;
+    }
+
+    .email-support {
+        margin-top: 50px;
+        text-align: center;
+    }
+
+    .email-support h2 {
+        margin-bottom: 20px;
+    }
+
+    .email-support form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .email-support input,
+    .email-support textarea {
+        margin-bottom: 10px;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .email-support input[type="submit"] {
+        background-color: #1e3163;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .email-support input[type="submit"]:hover {
+        background-color: #394f92;
+    }
+
+    footer {
+        background-color: #f2f2f2;
+        text-align: center;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+    <header>
+        <h1>Contact Us</h1>
+        <hr> </hr>
+    </header>
+
+    <div class="container">
+        <div class="contact-info">
+            <h4>For refund of unsuccessful purchases and card
+                charging issues</h4> 
+            <ul>
+                <br>
+                <li>  <span>bKash:</span>16247 </li>
+                <li> <hr> <span>Nagad:</span>16167 </hr> </li>
+                <li> <hr> <span>Rocket / Nexus:</span>16216 </hr> </li>
+                <li> <hr> <span>Visa / Mastercard:</span>N/A </hr> </li>
+                <hr> </hr>
+            </ul>
+        </div>
+
+        <div class="email-support">
+            <h2>Email Support</h2>
+            <form action="">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <textarea name="message" placeholder="Message" required></textarea>
+                <input type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <a href = ""> <p>Terms and Conditions | Privacy Policy</p> </a>
+        <a href = ""> <p> নিরাপদ . আরামদায়ক . সাশ্রয়ী </p></a>
+    </footer>
+
+{% endblock  %}

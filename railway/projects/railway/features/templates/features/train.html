@@ -1,0 +1,25 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Train Information
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content%}
+
+    <form class="form-profile" method="POST" action="train"> 
+        {%csrf_token%}
+        <label for=""> Select Train </label>
+        <input type='text' name='train-name' list = 'train-list' placeholder='Select Train'>
+        <datalist id = 'train-list'> 
+            {% for train in trains %}
+                <option value = {{train}}>
+            {% endfor %}
+        </datalist>
+        <a href = "" > <input type='submit' value = 'Search'> </a>
+    </form>
+
+{% endblock %}

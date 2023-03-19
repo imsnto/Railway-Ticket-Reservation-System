@@ -1,0 +1,57 @@
+{% extends 'index.html' %} 
+
+{% block title %}
+    {{ user }}
+{% endblock %}
+
+{% block insidehead %}
+{% endblock %}
+
+{% block content %}
+    <header>
+            <strong> Profile Details </strong>
+    </header>
+    <br> <br>
+
+    
+
+    <div class = "form-profile" >
+
+        <div  >
+            <label for=""> Name </label>
+            <b><p> {{user.first_name}} {{user.last_name}} </p></b>
+        </div>
+
+        <div  >
+            <label for=""> Email </label>
+            <b><p> {{user.email}}  </p></b>
+        </div>
+
+        <div  >
+            <label for=""> Phone </label>
+            <b><p> {{profile.phone}} </p></b>
+        </div>
+
+        <div  >
+            <label for=""> NID </label>
+            <b><p> {{profile.nid}} </p></b>
+        </div>
+
+        <div  >
+            <label for=""> Post Code </label>
+            <b><p> {{profile.post_code}} </p></b>
+        </div>
+
+        <div >
+            <label for=""> Address </label>
+            <b><p> {{profile.address}} </p></b>
+        </div>
+
+        <div> <a href = "{% url  'edit' %}">
+            <button> Edit Profile </button>
+        </a>
+        </div>
+    </div>
+
+{% endblock %}
+

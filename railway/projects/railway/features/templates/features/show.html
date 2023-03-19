@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Train Information
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="form-profile">
+        <table>
+            <thead> 
+                <th> Destination </th>
+                <th> Arrival Time </th>
+                <th> Departure Time </th>
+            </thead>
+            <tbody>
+            {% for i,j in route.items %}
+            <tr>
+                {% for k in j %}
+                {% if k|time:"H:i" %}
+                <td>{{k|time:"H:i"}}</td>
+                {% else %}
+                <td>{{k}}</td>
+                {% endif %}
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            <tbody>
+        </table>
+    </div>
+
+{% endblock %}

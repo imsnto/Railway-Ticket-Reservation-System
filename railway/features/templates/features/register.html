@@ -1,0 +1,38 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Registration 
+{% endblock %}
+{% block insidehead %}
+{% endblock %}
+
+{% block content %}
+<header>
+    
+</header>
+<br> <br>
+
+
+    <form class = "form-reg"  method="POST" action="register">
+        {% csrf_token %}
+        <div> 
+            {% for message in messages %}
+                <h5 style = "color:red;"> {{ message }} </h5>
+            {% endfor %}
+        </div>
+
+        <input class = "home-input" type = "text" id = "username" name = "username"  placeholder = "User Name"> <br> <br>
+        <input class = "home-input" type = "text" id = "first-name" name = "first-name"  placeholder = "First Name"> <br> <br>
+        <input class = "home-input" type = "text" id = "last-name" name = "last-name"  placeholder = "Last Name"> <br> <br>
+        <input class = "home-input" type = "text" id = "phone" name = "phone"  placeholder = "Phone Number"> <br> <br>
+        <input class = "home-input" type = "text" id = "email" name = "email"  placeholder = "Email" > <br> <br>
+        <input class = "home-input" type = "text" id = "nid" name = "nid"  placeholder = "NID" > <br> <br>
+        <input class = "home-input" type = "text" id = "post-code" name = "post-code"  placeholder = "Post Code" > <br> <br>
+
+
+        <input class = "home-input" type = "password" id = "password" name = "password"  placeholder = "Password" > <br> <br>
+        <input class = "home-input" type = "password" id = "confirm-password" name = "confirm-password"  placeholder = "Confirm Password" > <br> <br>
+       
+        <button type="submit" class="btn btn-primary" >Register</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'index.html' %}
+
+{% block title%}
+    Login 
+{% endblock %}
+
+{% block insidehead %}
+{% endblock %}
+
+{% block content %}
+    <header>
+        
+    </header>
+    <br> <br>
+
+    <form class = "form-reg" method="post" action="login">
+        {% csrf_token %}
+        <div> 
+            {% for message in messages %}
+                <h5 style = "color:red;"> {{ message }} </h5>
+            {% endfor %}
+        </div>
+
+        <input class = "form-group" type = "text" id = "username" name = "username"  placeholder = "username" autocomplete="off"> <br> <br>
+        <input class = "form-group" type = "password" id = "password" name = "password"  placeholder = "Password" autocomplete="off"> <br> <br>
+
+        <button type="submit" class="btn btn-primary"> Login </button>
+
+    </form>
+{% endblock %}

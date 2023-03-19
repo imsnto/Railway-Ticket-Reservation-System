@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block title%}
+    Home 
+{% endblock %}
+{% block insidehead %}
+{% endblock %}
+
+{% block content %}
+<div>
+    <header>
+        <h1>Welcome to Railway</h1>
+    </header>
+    </div>
+<br> <br> 
+
+<form class = "home-form"  method = "POST" action="home"> 
+     {% csrf_token %}
+    <div>
+        <input class = "home-input"  type = "text" name = "source" id = "source" list="source-options" placeholder = "From Station">
+        <datalist id="source-options">
+            {% for station in station_list %}
+                <option value={{station}}>
+            {% endfor %}
+        </datalist><br> <br>
+
+
+        <input class = "home-input" type = "text" name = "destination" id = "destination" list = "destination-options" placeholder = "To Station" >
+        <datalist id="destination-options">
+            {% for station in station_list %}
+                <option value={{station}}>
+            {% endfor %}
+        </datalist> <br> <br>
+
+        <label for = "doj">Date of Journey</label> <br>
+        <input class = "home-input" type = "date" id = "doj" name = "doj" placeholder = "Pick a date">
+        <br> <br>
+
+        <input class = "home-input" type = "text" id = "ticket-class" name = "ticket-class" list = "list-class" placeholder = "Choose Class">
+            <datalist id="list-class">
+            {% for class in class_list %}
+                <option value={{class}}>
+            {% endfor %}
+            </datalist> <br> <br>
+
+        <input class = "submit-button" type="submit" value="Search Train">
+    </div>
+</form>
+
+{% endblock %}
