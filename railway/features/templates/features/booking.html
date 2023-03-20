@@ -10,5 +10,25 @@
 
 {% block content%}
 
+<form class = "form-reg" method="GET" action="{% url 'booking' 'f' %}">
+    {% csrf_token %}
+
+    <label> Choose your seat </label>
+    <input type='text' name='seat-no' id='seat-no' list='available-seat' placeholder='book your seat' >
+    <datalist id = 'available-seat'>
+        {% for seat in seats %}
+            <option value = {{seat}} >
+        {% endfor %}
+    </datalist> <br> <br>
+
+
+    <div> <a href = "{% url  'booking' 'f' %}">
+        <button> Booking </button>
+    </a>
+    </div>
+
+
+</form>
+    
 
 {% endblock %}

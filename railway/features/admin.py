@@ -19,5 +19,5 @@ class RouteAdmin(admin.ModelAdmin):
 admin.site.register(Route, RouteAdmin)
 
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ['train', 'seat_number', 'booking_date', 'from_id', 'to_id']
+    list_display = ['train', 'seat_number', 'booking_date']
 admin.site.register(Booking, BookingAdmin)

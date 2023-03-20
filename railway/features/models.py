@@ -17,8 +17,6 @@ class Booking(models.Model):
     train = models.ForeignKey('features.Train', on_delete=models.CASCADE, null = True)
     seat_number = models.IntegerField()
     booking_date = models.DateField()
-    from_id = models.IntegerField(null = True)
-    to_id = models.IntegerField(null = True)
 
     class Meta:
         constraints = [

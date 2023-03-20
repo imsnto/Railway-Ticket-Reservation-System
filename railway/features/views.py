@@ -3,56 +3,110 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from django.db import connection
 from django.contrib import messages
-from .models import Profile, Train, Route
+from .models import Profile, Train, Route, Booking
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 import datetime
 from collections import defaultdict
+from reportlab.pdfgen import canvas
 
 
 # Create your views here.
 
-def booking(request, name):
-    source  = request.session.get('source')
-    destination = request.session.get('destination')
-    doj = request.session.get('doj')
+def generatepdf(request):
+    response = HttpResponse(content_type = 'application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
+    p = canvas.Canvas(response)
+    p.drawString(100, 750, 'Ticket-details')
+    p.save()
+    return response
 
-    query  = """
+def booking(request, name):
+    if request.method == 'GET':
+        seat = request.GET['seat-no']
+        print(seat)
+        pdf_response = generatepdf(request)
+        return pdf_response
+    else:
+
+        source  = request.session.get('source')
+        destination = request.session.get('destination')
+        doj = request.session.get('doj')
+        print(doj)
+        print(name)
+        rows = ""
+        tr = Train.objects.get(tr_id = name)
+        print(tr)
+        bookings = Booking.objects.filter(train=tr, booking_date = doj)
+        
+        booked = []
+        if bookings.exists():
+            rows = bookings.all()
+
+        
+        for row in rows:
+            booked.append(row.seat_number)
+        print(booked)
+        available_seat = []
+        for i in range(1, 101):
+            if i in booked:
+                pass
+            else :
+                available_seat.append(i)
+        
+
+        '''
+        query  = """
+            SELECT B.seat_number
+            FROM Booking as B
+            WHERE B.train = %s and booking_date = %s
+        """
+        params = (train,  doj)
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+        
+        for row in rows:
+            print(row)
+        '''
+        '''
+        query  = """
+                SELECT R.serial_no
+                FROM Route as R
+                WHERE R.stops_name = %s
+        """
+        params = (source,  )
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            row = cursor.fetchone()
+        
+        request.session['from_id'] = row[0]
+        print(row[0])
+
+        query  = """
             SELECT R.serial_no
             FROM Route as R
             WHERE R.stops_name = %s
-    """
-    params = (source,  )
-    with connection.cursor() as cursor:
-        cursor.execute(query, params)
-        row = cursor.fetchone()
+        """
+        params = (destination,  )
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            row = cursor.fetchone()
     
-    request.session['from_id'] = row[0]
-    print(row[0])
+        request.session['to_id'] = row[0]
 
-    query  = """
-        SELECT R.serial_no
-        FROM Route as R
-        WHERE R.stops_name = %s
-    """
-    params = (destination,  )
-    with connection.cursor() as cursor:
-        cursor.execute(query, params)
-        row = cursor.fetchone()
-
-    request.session['to_id'] = row[0]
-
-    print(row[0])
-
-    context = {
-        'source' : source,
-        'destination' : destination,
-        'doj': doj
-    }
+        print(row[0])
+        '''
+        context = {
+            'source' : source,
+            'destination' : destination,
+            'doj': doj,
+            'seats': available_seat
+        }
 
 
 
-    return render(request, 'features/booking.html', context)
+        return render(request, 'features/booking.html', context)
 
 def available_train(request):
     return render(request, 'features/available_train.html')
