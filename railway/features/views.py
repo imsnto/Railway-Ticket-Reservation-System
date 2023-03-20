@@ -18,6 +18,14 @@ def generatepdf(request):
     response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
     p = canvas.Canvas(response)
     p.drawString(100, 750, 'Ticket-details')
+    p.drawString(100, 700, f"Train ID: {request.session.get('tr-id')}")
+    p.drawString(100, 650, f"Train: {'gh'}")
+    p.drawString(100, 600, f"From: {request.session.get('source')}")
+    p.drawString(100, 550, f"To: {request.session.get('destination')}")
+    p.drawString(100, 500, f"Date: {request.session.get('doj')}")
+    p.drawString(100, 450, f"Passenger Name: {request.user.first_name} {request.user.last_name}")
+    p.drawString(100, 400, f"Number of Passengers: {'1'}")
+    p.showPage()
     p.save()
     return response
 
@@ -27,11 +35,13 @@ def booking(request, name):
         print(seat)
         pdf_response = generatepdf(request)
         return pdf_response
+    
     else:
 
         source  = request.session.get('source')
         destination = request.session.get('destination')
         doj = request.session.get('doj')
+        request.session['tr-id']  = name
         print(doj)
         print(name)
         rows = ""
