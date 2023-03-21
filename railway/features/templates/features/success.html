@@ -1,0 +1,75 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Success
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content%}
+
+    <header>
+
+    </header> <br> <br>
+
+    <div class = "form-profile" >
+        <form method = 'POST' action= "success" >
+            {% csrf_token %}
+
+            <div> 
+                <h2> <strong> Ticket Details </strong> </h2>
+            </div>
+            <br> <br> 
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Name: </strong> </label>  
+                <h6> <strong> {{f_name}} {{l_name}} </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Phone: </strong> </label>
+                <h6> <strong> {{phone}}  </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> NID: </strong> </label>
+                <h6> <strong> {{nid}}  </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Source:  </strong> </label>
+                <h6> <strong> {{source}} </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Destination: </strong>  </label>
+                <h6> <strong> {{destination}} </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Train Name: </strong> </label>
+                <h6> <strong> {{train_name}} </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Seat Number: </strong> </label>
+                <h6> <strong> {{seat}} </strong> </h6>
+            </div>
+
+            <div style="display: flex;"> 
+                <label style="margin-right: 10px;" for=""> <strong> Date of Journey:  </strong> </label>
+                <h6> <strong> {{doj}} </strong> </h6>
+            </div>
+
+            <br> <br>
+
+            <div> 
+                <button type="submit" class="btn btn-primary"> Confirm </button>
+            </div>
+        </form>
+
+
+
+{% endblock %}

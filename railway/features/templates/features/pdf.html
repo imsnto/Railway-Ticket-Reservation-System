@@ -1,0 +1,24 @@
+{% extends 'index.html' %}
+
+{% block title %}
+    Train Information
+{% endblock %}
+
+{% block insidehead %}
+
+{% endblock %}
+
+{% block content%}
+
+    <header>
+
+    </header> <br> <br>
+
+    <div class = "form-profile" >
+        <h1> You are successfully purchase a ticket. </h1> <br> <br> <br>
+        <h4>PDF Download</h4>
+        <p>Click the button below to download the PDF file:</p>
+        <a href="data:application/pdf;base64,{{ pdf }}" download="file.pdf">Download PDF</a>
+    </div>
+
+{% endblock %}

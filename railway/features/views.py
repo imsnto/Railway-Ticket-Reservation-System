@@ -9,32 +9,136 @@ from django.contrib.auth.hashers import make_password, check_password
 import datetime
 from collections import defaultdict
 from reportlab.pdfgen import canvas
-
+import base64
 
 # Create your views here.
+def success(request):
+    pdf_content_base64 = request.session['pdf_content_base64']
+    pdf_content = base64.b64decode(pdf_content_base64)
+    pdf_response = HttpResponse(pdf_content, content_type='application/pdf')
+    pdf_response['Content-Disposition'] = 'attachment; filename="file.pdf"'
+
+    context = {
+        'pdf': pdf_content_base64,
+    }
+    return render(request, 'features/pdf.html', context)
+
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.pdfgen import canvas
 
 def generatepdf(request):
-    response = HttpResponse(content_type = 'application/pdf')
+    # Create a landscape PDF with letter size paper
+    response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
-    p = canvas.Canvas(response)
-    p.drawString(100, 750, 'Ticket-details')
-    p.drawString(100, 700, f"Train ID: {request.session.get('tr-id')}")
-    p.drawString(100, 650, f"Train: {'gh'}")
-    p.drawString(100, 600, f"From: {request.session.get('source')}")
-    p.drawString(100, 550, f"To: {request.session.get('destination')}")
-    p.drawString(100, 500, f"Date: {request.session.get('doj')}")
-    p.drawString(100, 450, f"Passenger Name: {request.user.first_name} {request.user.last_name}")
-    p.drawString(100, 400, f"Number of Passengers: {'1'}")
+    p = canvas.Canvas(response, pagesize=landscape(letter))
+
+    # Set the font size and style
+    p.setFont('Helvetica-Bold', 20)
+    
+    # Add a title
+    p.drawCentredString(400, 580, 'Train Ticket')
+
+    # Add a separator line
+    p.line(100, 560, 700, 560)
+
+    # Set the font size and style
+    p.setFont('Helvetica', 14)
+
+    # Add the passenger's name
+    p.drawString(100, 520, 'Passenger Name:')
+    p.drawString(250, 520, f'{request.user.first_name} {request.user.last_name}')
+
+    # Add the phone number
+    p.drawString(100, 480, 'Phone:')
+    p.drawString(250, 480, f'{request.session.get("phone")}')
+
+    # Add the NID number
+    p.drawString(100, 440, 'NID:')
+    p.drawString(250, 440, f'{request.session.get("nid")}')
+
+    # Add the source and destination
+    p.drawString(100, 400, 'Source:')
+    p.drawString(250, 400, f'{request.session.get("source")}')
+    p.drawString(100, 360, 'Destination:')
+    p.drawString(250, 360, f'{request.session.get("destination")}')
+
+    # Add the train name and seat number
+    p.drawString(100, 320, 'Train Name:')
+    p.drawString(250, 320, f'{request.session.get("train")}')
+    p.drawString(100, 280, 'Seat Number:')
+    p.drawString(250, 280, f'{request.session.get("seat")}')
+
+    # Add the number of passengers
+    p.drawString(100, 240, 'No. of Passengers:')
+    p.drawString(250, 240, '1')
+
+    p.drawString(100, 200, 'Date of Journey:')
+    p.drawString(250, 200, f'{request.session.get("doj")}') 
+
+    # Add a separator line
+    p.line(100, 140, 700, 140)
+
+    # Add a footer
+    p.setFont('Helvetica', 10)
+    p.drawCentredString(400, 20, 'Thank you for traveling with us!')
+
+    # Save the PDF and return the response
     p.showPage()
     p.save()
     return response
 
 def booking(request, name):
     if request.method == 'GET':
-        seat = request.GET['seat-no']
-        print(seat)
+        seat = int(request.GET['seat-no'])
+        source = request.session.get('source')
+        destination = request.session.get('destination')
+        doj = request.session.get('doj')
+        tr_id = request.session.get('tr-id')
+        f_name = request.user.first_name
+        l_name = request.user.last_name
+
+
+        user = User.objects.get(username = request.user.username)
+        profile = Profile.objects.get(user=user)
+        phone_number = profile.phone
+        nid = profile.nid
+
+        
+
+
+        train = Train.objects.get(tr_id=tr_id)
+        train_id = train.tr_id
+        tr_name = train.tr_name
+        request.session['train'] = tr_name
+        request.session['nid'] = nid
+        request.session['phone'] = phone_number
+        request.session['seat'] = seat
+
+
+        query = """
+                INSERT INTO Booking(train_id, seat_number, booking_date) VALUES(%s, %s, %s)
+        """
+        params = (train_id, seat, doj)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+
         pdf_response = generatepdf(request)
-        return pdf_response
+        pdf_content_base64 = base64.b64encode(pdf_response.content).decode('utf-8')
+        request.session['pdf_content_base64'] = pdf_content_base64
+        context = {
+            'source' : source,
+            'destination' : destination,
+            'doj': doj,
+            'tr_id': tr_id,
+            'seat': seat,
+            'train_name': tr_name,
+            'phone': phone_number,
+            'nid':nid, 
+            'f_name': f_name,
+            'l_name':l_name
+        }
+        return render(request, 'features/success.html', context)
     
     else:
 

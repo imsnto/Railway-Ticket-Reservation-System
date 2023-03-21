@@ -12,5 +12,6 @@ urlpatterns = [
     path('edit', views.edit, name='edit'),
     path('show', views.show, name='show'),
     path('available_train', views.available_train, name = 'available_train'),
+    path('booking/success', views.success, name='success'),
     path('booking/<str:name>', views.booking, name='booking'),
 ]
