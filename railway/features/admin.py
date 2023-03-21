@@ -25,3 +25,4 @@ admin.site.register(Booking, BookingAdmin)
 class TicketCostAdmin(admin.ModelAdmin):
     list_display = ['source', 'destination', 'cost']
 admin.site.register(TicketCost, TicketCostAdmin)
+

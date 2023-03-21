@@ -4,6 +4,8 @@ from django.db.models import UniqueConstraint
 
 User = get_user_model()
 
+
+
 class TicketCost(models.Model):
     source = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
