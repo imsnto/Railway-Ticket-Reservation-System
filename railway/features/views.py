@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from django.db import connection
 from django.contrib import messages
-from .models import Profile, Train, Route, Booking
+from .models import Profile, Train, Route, Booking, TicketCost
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password, check_password
 import datetime
@@ -75,8 +75,14 @@ def generatepdf(request):
     p.drawString(100, 200, 'Date of Journey:')
     p.drawString(250, 200, f'{request.session.get("doj")}') 
 
+    p.drawString(100, 160, 'Ticket Class:')
+    p.drawString(250, 160, f'{request.session.get("class")}') 
+
+    p.drawString(100, 120, 'Ticket Cost:')
+    p.drawString(250, 120, f'{request.session.get("cost")}') 
+
     # Add a separator line
-    p.line(100, 140, 700, 140)
+    p.line(100, 80, 700, 80)
 
     # Add a footer
     p.setFont('Helvetica', 10)
@@ -109,6 +115,8 @@ def booking(request, name):
         train = Train.objects.get(tr_id=tr_id)
         train_id = train.tr_id
         tr_name = train.tr_name
+        class_seat = request.session.get('class')
+
         request.session['train'] = tr_name
         request.session['nid'] = nid
         request.session['phone'] = phone_number
@@ -123,6 +131,27 @@ def booking(request, name):
         with connection.cursor() as cursor:
             cursor.execute(query, params)
 
+        query = """
+                SELECT T.cost
+                FROM TicketCost as T
+                WHERE T.source=%s AND T.destination=%s
+        """
+
+        params = (source, destination)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            row = cursor.fetchone()
+        
+        print("price")
+        print(row)
+
+        cost = 0
+        if row is not None:
+            cost = row[0]
+
+        request.session['cost'] = cost
+
         pdf_response = generatepdf(request)
         pdf_content_base64 = base64.b64encode(pdf_response.content).decode('utf-8')
         request.session['pdf_content_base64'] = pdf_content_base64
@@ -136,7 +165,9 @@ def booking(request, name):
             'phone': phone_number,
             'nid':nid, 
             'f_name': f_name,
-            'l_name':l_name
+            'l_name':l_name,
+            'cost':cost,
+            'class':class_seat
         }
         return render(request, 'features/success.html', context)
     
@@ -335,6 +366,7 @@ def home(request):
         request.session['source'] = source
         request.session['destination'] = destination
         request.session['doj'] = doj
+        request.session['class'] = ticket_class
 
 
         query = """

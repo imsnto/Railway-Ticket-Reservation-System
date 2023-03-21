@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Train, Route, Booking
+from .models import Profile, Train, Route, Booking, TicketCost
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -21,3 +21,7 @@ admin.site.register(Route, RouteAdmin)
 class BookingAdmin(admin.ModelAdmin):
     list_display = ['train', 'seat_number', 'booking_date']
 admin.site.register(Booking, BookingAdmin)
+
+class TicketCostAdmin(admin.ModelAdmin):
+    list_display = ['source', 'destination', 'cost']
+admin.site.register(TicketCost, TicketCostAdmin)
