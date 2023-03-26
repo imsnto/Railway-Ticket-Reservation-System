@@ -50,10 +50,6 @@ class Profile(models.Model):
 class Train(models.Model):
     tr_id = models.IntegerField(primary_key=True)
     tr_name = models.CharField(max_length=100)
-    tr_source = models.CharField(max_length=100)
-    tr_destination = models.CharField(max_length=100)
-    tr_departure = models.TimeField(auto_now=False)
-    tr_arrival = models.TimeField(auto_now=False)
     tr_total_seats = models.IntegerField()
 
     class Meta:

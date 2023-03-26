@@ -11,7 +11,7 @@ class ProfileAdmin(admin.ModelAdmin):
 admin.site.register(Profile, ProfileAdmin)
 
 class TrainAdmin(admin.ModelAdmin):
-    list_display = ('tr_id', 'tr_name', 'tr_source', 'tr_destination', 'tr_departure', 'tr_arrival', 'tr_total_seats')
+    list_display = ('tr_id', 'tr_name','tr_total_seats')
 admin.site.register(Train, TrainAdmin)
 
 class RouteAdmin(admin.ModelAdmin):
