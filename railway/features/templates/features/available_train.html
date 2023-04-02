@@ -12,10 +12,9 @@
 
 
 {% for train, times in trains.items %}
-{% for idd in tr_id %}
-    <form class = "form-reg" method="POST" action="{% url 'booking' idd %}">
+    <form class = "form-reg" method="POST" action="{% url 'booking' times.2 %}">
         {% csrf_token %}
-
+    
         <ul>
            <h1> <li> {{train}} </li> </h1>
         </ul>
@@ -26,8 +25,10 @@
             </thead>
             <tbody> 
                     <tr > 
-                        {% for time in times %}
-                            <td colspan="2"> {{ time }} </td>
+                        {% for key  in times %}
+                        {% if forloop.counter <= 2%}
+                            <td colspan="2"> {{ key }} </td>
+                            {% endif %}
                         {% endfor %}
                     </tr>
             </tbody>
@@ -35,14 +36,13 @@
 
 
         </table> <br> <br> 
-        <div> <a href = "{% url  'booking' idd %}">
+        <div> <a href = "{% url  'booking' times.2 %}">
             <button type="submit" class="btn btn-primary"> Confirm </button>
         </a>
         </div>
 
-
+        <br> <br>
     </form>
-    {% endfor %}
     {% endfor %}
 
 

@@ -114,6 +114,8 @@ def booking(request, name):
 
         train = Train.objects.get(tr_id=tr_id)
         train_id = train.tr_id
+        print("train id")
+        print(type(train_id))
         tr_name = train.tr_name
         class_seat = request.session.get('class')
 
@@ -146,7 +148,24 @@ def booking(request, name):
         print("price")
         print(row)
 
-        cost = 0
+        '''
+        query = """
+                SELECT R.arrival_time
+                FROM Route as R
+                join Route as r on R.serial_number < r.serial_number and R.stops_name = %s and r.stops_name = %s and r.train = %s and R.train= %s
+                WHERE R.stops_name=%s AND R.stops_name=%s 
+        """
+
+        params = (source, destination, train_id, train_id, source, destination)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            row = cursor.fetchone()
+
+        print("arrival time")
+        print(row)
+        '''
+        cost = 120
         if row is not None:
             cost = row[0]
 
@@ -363,6 +382,7 @@ def home(request):
         
         print(source)
         print(destination)
+
         request.session['source'] = source
         request.session['destination'] = destination
         request.session['doj'] = doj
@@ -374,12 +394,16 @@ def home(request):
                 from Train as T
                 join Route as t1 on t1.stops_name = %s 
                 join Route as t2 on t2.stops_name = %s 
-                where t1.serial_no < t2.serial_no
+                where t1.serial_no < t2.serial_no and t1.stops_name = %s and t2.stops_name = %s
         """
-        params = (source, destination)
+        params = (source, destination, source, destination)
         with connection.cursor() as cursor:
             cursor.execute(query, params)
-            rows = cursor.fetchone()
+            rows = cursor.fetchall()
+
+        print(rows)
+        rows = set(rows)
+        print(rows)
 
         if rows is None:
             print("sorry there is no train available")
@@ -387,8 +411,11 @@ def home(request):
         
         d = defaultdict(list)
         l = []
-        for row in rows:
-            l.append(str(row))
+        for p in rows:
+            row = p[0]
+            if row  in l:
+                continue
+
             query = """
                     SELECT R.departure_time
                     from Route as R
@@ -424,19 +451,22 @@ def home(request):
                 cursor.execute(query, params)
                 row4 = cursor.fetchone()
 
+            if row4[0] in d:
+                continue
+            l.append(str(row))
+
             d[row4[0]].append(row2[0])
             d[row4[0]].append(row3[0])
-            print(d)
-
-            context = {
-                'trains' : dict(d),
-                'to' : destination,
-                'from': source,
-                'tr_id': l
-            }
+            d[row4[0]].append(row)
 
 
-            return render(request, 'features/available_train.html', context)
+        context = {
+            'trains' : dict(d),
+            'to' : destination,
+            'from': source,
+        }
+
+        return render(request, 'features/available_train.html', context)
 
     station_list = ['Khulna', 'Jashore', 'Kotchandpur', 'Darshana', 'Chuadanga', 'Noapara', 'Mubarakganj', 'Alamdanga',
                     'Poradaha', 'Mirpur', 'Bheramara', 'Ishwardi', 'Chatmohar', 'Boral_Bridge', 'Ullapara', 'SHM Monsur Ali',

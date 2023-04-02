@@ -14,6 +14,7 @@ class TicketCost(models.Model):
     class Meta:
         db_table = 'ticketcost'
 
+
 class Seat(models.Model):
     train = models.ForeignKey('features.Train', on_delete=models.CASCADE)
     seat_number = models.IntegerField()
@@ -35,9 +36,11 @@ class Booking(models.Model):
         db_table = 'booking'
 
 
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=11)
+    phone = models.CharField(max_length=11,)
     nid = models.CharField(max_length=10, primary_key=True)
     post_code = models.IntegerField()
     address = models.CharField(max_length=100, null=True)
@@ -45,6 +48,7 @@ class Profile(models.Model):
     
     class Meta:
         db_table = 'profile'
+
 
     
 class Train(models.Model):
