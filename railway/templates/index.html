@@ -16,7 +16,7 @@
         <div class = "nav-div"> 
             <nav class = "home-Nav" > 
                 <div class = "navDiv">
-                    <a class = "navbutton" href="/home"> Home </a>
+                    <a class = "navbutton" href="{% url 'home' %}"> Home </a>
 
 
                 {% if not user.is_authenticated %}

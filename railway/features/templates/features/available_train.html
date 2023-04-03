@@ -10,11 +10,24 @@
 
 {% block content%}
 
+{% if messages %}
+<div class = "form-reg"> 
+    {% for message in messages %}
+        <h5 style = "color:red;"> {{ message }} </h5>
+    {% endfor %}
+</div>
+{% endif %}
 
 {% for train, times in trains.items %}
     <form class = "form-reg" method="POST" action="{% url 'booking' times.2 %}">
         {% csrf_token %}
-    
+
+        <div> 
+            {% for message in messages %}
+                <h5 style = "color:red;"> {{ message }} </h5>
+            {% endfor %}
+        </div>
+
         <ul>
            <h1> <li> {{train}} </li> </h1>
         </ul>

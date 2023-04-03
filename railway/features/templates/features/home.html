@@ -14,7 +14,7 @@
     </div>
 <br> <br> 
 
-<form class = "home-form"  method = "POST" action="home"> 
+<form class = "home-form"  method = "POST" action="{% url 'home' %}"> 
      {% csrf_token %}
     <div>
         <input class = "home-input"  type = "text" name = "source" id = "source" list="source-options" placeholder = "From Station">

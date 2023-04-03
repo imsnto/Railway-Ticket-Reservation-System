@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth.models import User, auth
 from django.db import connection
@@ -27,48 +27,38 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
 
 def generatepdf(request):
-    # Create a landscape PDF with letter size paper
+
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
     p = canvas.Canvas(response, pagesize=landscape(letter))
 
-    # Set the font size and style
     p.setFont('Helvetica-Bold', 20)
     
-    # Add a title
     p.drawCentredString(400, 580, 'Train Ticket')
 
-    # Add a separator line
     p.line(100, 560, 700, 560)
 
-    # Set the font size and style
     p.setFont('Helvetica', 14)
 
-    # Add the passenger's name
     p.drawString(100, 520, 'Passenger Name:')
     p.drawString(250, 520, f'{request.user.first_name} {request.user.last_name}')
 
-    # Add the phone number
     p.drawString(100, 480, 'Phone:')
     p.drawString(250, 480, f'{request.session.get("phone")}')
 
-    # Add the NID number
     p.drawString(100, 440, 'NID:')
     p.drawString(250, 440, f'{request.session.get("nid")}')
 
-    # Add the source and destination
     p.drawString(100, 400, 'Source:')
     p.drawString(250, 400, f'{request.session.get("source")}')
     p.drawString(100, 360, 'Destination:')
     p.drawString(250, 360, f'{request.session.get("destination")}')
 
-    # Add the train name and seat number
     p.drawString(100, 320, 'Train Name:')
     p.drawString(250, 320, f'{request.session.get("train")}')
     p.drawString(100, 280, 'Seat Number:')
     p.drawString(250, 280, f'{request.session.get("seat")}')
 
-    # Add the number of passengers
     p.drawString(100, 240, 'No. of Passengers:')
     p.drawString(250, 240, '1')
 
@@ -81,14 +71,11 @@ def generatepdf(request):
     p.drawString(100, 120, 'Ticket Cost:')
     p.drawString(250, 120, f'{request.session.get("cost")}') 
 
-    # Add a separator line
     p.line(100, 80, 700, 80)
 
-    # Add a footer
     p.setFont('Helvetica', 10)
     p.drawCentredString(400, 20, 'Thank you for traveling with us!')
 
-    # Save the PDF and return the response
     p.showPage()
     p.save()
     return response
@@ -294,6 +281,8 @@ def train(request):
         d = defaultdict(list)
 
         for route in routes:
+            if route.stops_name in d:
+                continue
             d[route.stops_name].append(route.stops_name)
             d[route.stops_name].append(route.arrival_time)
             d[route.stops_name].append(route.departure_time)
@@ -306,10 +295,11 @@ def train(request):
 
         return render(request, 'features/show.html', context)
     
-    train_list = ["Rocket_Express(101)", "Rocket_Express(102)", "Sagardari_Express(201)","Sagardari_Express(202)" ]
+    train_list_from_db = Train.objects.all()
+
 
     context = {
-        'trains': train_list
+        'trains': train_list_from_db
     }
 
     return render(request, 'features/train.html', context)
@@ -392,10 +382,11 @@ def home(request):
         query = """
                 SELECT T.tr_id
                 from Train as T
-                join Route as t1 on t1.stops_name = %s 
-                join Route as t2 on t2.stops_name = %s 
-                where t1.serial_no < t2.serial_no and t1.stops_name = %s and t2.stops_name = %s
+                join Route as t1 on t1.train_id = T.tr_id AND t1.stops_name = %s 
+                join Route as t2 on t2.train_id = T.tr_id AND t2.stops_name = %s 
+                where t1.serial_no < t2.serial_no and t1.stops_name = %s and t2.stops_name = %s 
         """
+
         params = (source, destination, source, destination)
         with connection.cursor() as cursor:
             cursor.execute(query, params)
@@ -405,9 +396,9 @@ def home(request):
         rows = set(rows)
         print(rows)
 
-        if rows is None:
-            print("sorry there is no train available")
-            return render(request, 'features/home.html')
+        if len(rows) < 1:
+            messages.info(request, 'There is no train available')
+            return render(request, 'features/available_train.html')
         
         d = defaultdict(list)
         l = []
@@ -419,7 +410,7 @@ def home(request):
             query = """
                     SELECT R.departure_time
                     from Route as R
-                    join Train as T on T.tr_id = %s and R.stops_name = %s
+                    join Train as T on T.tr_id = R.train_id and T.tr_id = %s and R.stops_name = %s
             """
             params = (row, source)
 
@@ -432,7 +423,7 @@ def home(request):
             query = """
                     SELECT R.arrival_time
                     from Route as R
-                    join Train as T on T.tr_id = %s and R.stops_name = %s
+                    join Train as T on T.tr_id = R.train_id and T.tr_id = %s and R.stops_name = %s
             """
 
             params = (row, destination)
@@ -454,10 +445,13 @@ def home(request):
             if row4[0] in d:
                 continue
             l.append(str(row))
-
-            d[row4[0]].append(row2[0])
-            d[row4[0]].append(row3[0])
-            d[row4[0]].append(row)
+            st = row4[0]
+            st = st[0:-5]
+            p =st.split('_')
+            st = p[0]+ ' ' + p[1]
+            d[st].append(row2[0])
+            d[st].append(row3[0])
+            d[st].append(row)
 
 
         context = {
@@ -471,10 +465,11 @@ def home(request):
     station_list = ['Khulna', 'Jashore', 'Kotchandpur', 'Darshana', 'Chuadanga', 'Noapara', 'Mubarakganj', 'Alamdanga',
                     'Poradaha', 'Mirpur', 'Bheramara', 'Ishwardi', 'Chatmohar', 'Boral_Bridge', 'Ullapara', 'SHM Monsur Ali',
                     'BBSetu_E', 'Joydebpur', 'Biman_Bandar', 'Dhaka']
+    stops = Route.objects.values_list('stops_name', flat=True).distinct()
     class_list = ['SHOVAN', 'S_CHAIR', 'F_SEAT', 'SNIGDHA', 'AC_B', 'AC_S', 'SHULOV', 'AC_CHAIR', 'F_BERTH','F_CHAIR', ]
-    station_list = sorted(station_list)
+    station_list = sorted(stops)
     class_list = sorted(class_list)
-    return render(request, 'features/home.html', {'station_list': station_list, 'class_list': class_list})
+    return render(request, 'features/home.html', {'station_list': stops, 'class_list': class_list})
 
 
         
@@ -526,19 +521,59 @@ def register(request):
         nid = request.POST.get('nid')
         postcode = request.POST.get('post-code')
 
+        context = {
+            'username': username,
+            'fname': fname,
+            'lname': lname,
+            'phone': phone,
+            'email': email,
+            'pass1': pass1,
+            'pass2': pass2, 
+            'nid': nid,
+            'postcode' : postcode
+        }
+
         if pass1 == pass2:
-            if username and User.objects.filter(username=username).exists():
-                messages.info(request, 'Username already exists')
-                return redirect('register')
-            elif email and User.objects.filter(email=email).exists():
-                messages.info(request, 'Email already exists')
-                return redirect('register')
-            elif nid and Profile.objects.filter(nid=nid).exists():
-                messages.info(request, 'NID already exists')
-                return redirect('register')
-            elif email and  Profile.objects.filter(phone=phone).exists():
-                messages.info(request, 'Phone number already exists')
-                return redirect('register')
+
+            if len(username) < 4 or User.objects.filter(username=username).exists():
+                if len(username) < 4:
+                    messages.info(request, 'Too short username')
+                else:
+                     messages.info(request, 'Username already exists')
+                return render(request, 'features/register.html', context)
+                return HttpResponseRedirect('register')
+            
+            elif len(email) < 6 or User.objects.filter(email=email).exists():
+                if len(email) < 6:
+                    messages.info(request, 'Invalid Email');
+                else:
+                    messages.info(request, 'Email already exists')
+                return render(request, 'features/register.html', context)
+                return HttpResponseRedirect('register')
+            
+            elif len(nid) <10  or Profile.objects.filter(nid=nid).exists():
+                if len(nid) < 10:
+                    messages.info(request, 'Invalid NID')
+                else:
+                    messages.info(request, 'NID already exists')
+                return render(request, 'features/register.html', context)
+            
+                return HttpResponseRedirect('register')
+            elif len(phone) < 11 or  Profile.objects.filter(phone=phone).exists():
+                if len(phone) < 11:
+                    messages.info(request, 'Invalid Phone number')
+                else:
+                    messages.info(request, 'Phone number already exists')
+                return render(request, 'features/register.html', context)
+                return HttpResponseRedirect('register')
+            elif len(postcode) < 4:
+                messages.info(request, 'Invalid post code')
+                return render(request, 'features/register.html', context)
+            elif len(pass1) < 6:
+                messages.info(request, 'password is too short')
+                return render(request, 'features/register.html', context)
+
+
             
             else:
                 user = User.objects.create_user(username=username, email=email, password=pass1, first_name = fname, last_name = lname)
@@ -548,10 +583,12 @@ def register(request):
                 user_model = User.objects.get(username=username)
                 new_profile = Profile.objects.create(user=user_model, nid=nid, post_code=postcode, phone=phone)
                 new_profile.save()
-                return redirect('login')
-        else:
-            messages.info(request, 'Passwords do not match')
-            redirect('register')
+                return HttpResponseRedirect('login')
+
+        messages.info(request, 'Passwords do not match')
+        return render(request, 'features/register.html', context)
+        return HttpResponseRedirect('register')
+        redirect('register')
 
     else:
         return render(request, 'features/register.html')

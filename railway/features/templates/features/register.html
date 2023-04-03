@@ -21,17 +21,17 @@
             {% endfor %}
         </div>
 
-        <input class = "home-input" type = "text" id = "username" name = "username"  placeholder = "User Name"> <br> <br>
-        <input class = "home-input" type = "text" id = "first-name" name = "first-name"  placeholder = "First Name"> <br> <br>
-        <input class = "home-input" type = "text" id = "last-name" name = "last-name"  placeholder = "Last Name"> <br> <br>
-        <input class = "home-input" type = "text" id = "phone" name = "phone"  placeholder = "Phone Number"> <br> <br>
-        <input class = "home-input" type = "text" id = "email" name = "email"  placeholder = "Email" > <br> <br>
-        <input class = "home-input" type = "text" id = "nid" name = "nid"  placeholder = "NID" > <br> <br>
-        <input class = "home-input" type = "text" id = "post-code" name = "post-code"  placeholder = "Post Code" > <br> <br>
+        <input class = "home-input" type = "text" id = "username" name = "username"  placeholder = "User Name" value = "{{username}}" > <br> <br>
+        <input class = "home-input" type = "text" id = "first-name" name = "first-name"  placeholder = "First Name" value = "{{fname}}"> <br> <br>
+        <input class = "home-input" type = "text" id = "last-name" name = "last-name"  placeholder = "Last Name" value = "{{lname}}"> <br> <br>
+        <input class = "home-input" type = "text" id = "phone" name = "phone"  placeholder = "Phone Number" value = "{{phone}}"> <br> <br>
+        <input class = "home-input" type = "text" id = "email" name = "email"  placeholder = "Email" value = "{{email}}" > <br> <br>
+        <input class = "home-input" type = "text" id = "nid" name = "nid"  placeholder = "NID" value = "{{nid}}"> <br> <br>
+        <input class = "home-input" type = "" id = "post-code" name = "post-code"  placeholder = "Post Code" value = "{{postcode}}" > <br> <br>
 
 
-        <input class = "home-input" type = "password" id = "password" name = "password"  placeholder = "Password" > <br> <br>
-        <input class = "home-input" type = "password" id = "confirm-password" name = "confirm-password"  placeholder = "Confirm Password" > <br> <br>
+        <input class = "home-input" type = "password" id = "password" name = "password"  placeholder = "Password" value = "{{pass1}}" > <br> <br>
+        <input class = "home-input" type = "password" id = "confirm-password" name = "confirm-password"  placeholder = "Confirm Password" value = "{{pass2}}" > <br> <br>
        
         <button type="submit" class="btn btn-primary" >Register</button>
     </form>

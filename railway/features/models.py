@@ -48,6 +48,8 @@ class Profile(models.Model):
     
     class Meta:
         db_table = 'profile'
+    def __str__(self):
+        return f"{self.user.first_name}"
 
 
     
@@ -58,6 +60,10 @@ class Train(models.Model):
 
     class Meta:
         db_table = 'train'
+
+    def __str__(self):
+        return f"{self.tr_name}"
+
 
 class Route(models.Model):
     train = models.ForeignKey(Train, on_delete=models.CASCADE)
