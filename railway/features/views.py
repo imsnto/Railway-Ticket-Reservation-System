@@ -18,6 +18,16 @@ def success(request):
     pdf_response = HttpResponse(pdf_content, content_type='application/pdf')
     pdf_response['Content-Disposition'] = 'attachment; filename="file.pdf"'
 
+    mobile = request.POST['mob']
+    payment = request.POST['payment']
+
+
+    request.session['mobile'] = mobile
+    request.session['payment'] = payment
+
+
+
+
     context = {
         'pdf': pdf_content_base64,
     }
@@ -27,6 +37,13 @@ from reportlab.lib.pagesizes import letter, landscape
 from reportlab.pdfgen import canvas
 
 def generatepdf(request):
+
+    mobile = request.session.get('mobile')
+    payment = request.session.get('payment')
+
+    print(mobile)
+    print(payment)
+    print(8745984)
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="ticket.pdf"'
@@ -71,10 +88,18 @@ def generatepdf(request):
     p.drawString(100, 120, 'Ticket Cost:')
     p.drawString(250, 120, f'{request.session.get("cost")}') 
 
-    p.line(100, 80, 700, 80)
+    p.drawString(100, 80, 'Payment Method: ')
+    p.drawString(250, 80, f'{payment}')
+
+
+    p.drawString(100, 40, 'Payment Number: ')
+    p.drawString(250, 40, f'{mobile}')
+
+
+    p.line(100, 20, 700, 20)
 
     p.setFont('Helvetica', 10)
-    p.drawCentredString(400, 20, 'Thank you for traveling with us!')
+    p.drawCentredString(400, 10, 'Thank you for traveling with us!')
 
     p.showPage()
     p.save()

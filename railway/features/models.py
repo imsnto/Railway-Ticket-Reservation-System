@@ -5,25 +5,6 @@ from django.db.models import UniqueConstraint
 User = get_user_model()
 
 
-
-class TicketCost(models.Model):
-    source = models.CharField(max_length=100)
-    destination = models.CharField(max_length=100)
-    cost = models.IntegerField()
-
-    class Meta:
-        db_table = 'ticketcost'
-
-
-class Seat(models.Model):
-    train = models.ForeignKey('features.Train', on_delete=models.CASCADE)
-    seat_number = models.IntegerField()
-    is_booked = models.BooleanField(default=False)
-
-    class Meta:
-        db_table = 'seat'
-
-
 class Booking(models.Model):
     train = models.ForeignKey('features.Train', on_delete=models.CASCADE, null = True)
     seat_number = models.IntegerField()
@@ -75,3 +56,23 @@ class Route(models.Model):
 
     class Meta:
         db_table = 'route'
+
+
+
+class TicketCost(models.Model):
+    source = models.CharField(max_length=100)
+    destination = models.CharField(max_length=100)
+    cost = models.IntegerField()
+
+    class Meta:
+        db_table = 'ticketcost'
+
+
+class Seat(models.Model):
+    train = models.ForeignKey('features.Train', on_delete=models.CASCADE)
+    seat_number = models.IntegerField()
+    is_booked = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'seat'
+    
