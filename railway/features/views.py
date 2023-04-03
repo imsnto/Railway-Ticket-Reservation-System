@@ -367,7 +367,26 @@ def home(request):
         doj = request.POST['doj']
         ticket_class = request.POST['ticket-class']
         time = datetime.datetime.now().strftime("%H:%M:%S")
-        date = datetime.datetime.now().date()
+        date = datetime.datetime.now()
+
+        print(doj)
+        print(date)
+        date_format = "%Y-%m-%d"
+
+        bd = datetime.datetime.strptime(doj, date_format)
+        cd = datetime.datetime.strftime(date, date_format)
+
+        print(type(bd))
+        print(type(date))
+
+        print(bd)
+        print(cd)
+
+        if bd < date:
+            messages.info(request, 'TIme is Over. Please select time since today')
+            return render(request, 'features/available_train.html')
+
+
 
         
         print(source)
