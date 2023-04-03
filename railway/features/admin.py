@@ -15,7 +15,7 @@ class TrainAdmin(admin.ModelAdmin):
 admin.site.register(Train, TrainAdmin)
 
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ['train', 'serial_no', 'stops_name', 'arrival_time', 'departure_time', 'available_seats']
+    list_display = ['train', 'stops_name', 'arrival_time', 'departure_time', 'available_seats']
 admin.site.register(Route, RouteAdmin)
 
 class BookingAdmin(admin.ModelAdmin):

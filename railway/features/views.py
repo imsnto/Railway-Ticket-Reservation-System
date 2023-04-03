@@ -384,7 +384,7 @@ def home(request):
                 from Train as T
                 join Route as t1 on t1.train_id = T.tr_id AND t1.stops_name = %s 
                 join Route as t2 on t2.train_id = T.tr_id AND t2.stops_name = %s 
-                where t1.serial_no < t2.serial_no and t1.stops_name = %s and t2.stops_name = %s 
+                where t1.serial_no < t2.serial_no and t1.arrival_time < t2.arrival_time and t1.stops_name = %s and t2.stops_name = %s 
         """
 
         params = (source, destination, source, destination)
